@@ -246,14 +246,14 @@ class Neighbourhood(Shape):
    
     assignment = [1] + list([max([1, np.random.poisson(n_neighbours * u)]) for u in range(1, radius + 1)])
     assignment = list(np.sort(np.array(assignment)))
-    print(assignment)
+    self.n_nodes = np.sum(np.array(assignment))
     self.labels = list(np.concatenate([[i] * assignment[i] for i in range(0, radius + 1)]))
-    self.G.add_edges_from([(0, uu) for uu in range(1, 1+ assignment[1])])
+    self.G.add_edges_from([(origin,  origin + uu) for uu in range(1, 1+ assignment[1])])
     #### Randomly add edges between them too
     ####
     uu = np.random.choice(range(1, assignment[1] + 1), size=n_neighbours, replace=True)
     vv = np.random.choice(range(1, assignment[1] + 1), size=n_neighbours, replace=True)
-    self.G.add_edges_from([(uu[i], vv[i]) for i in range(n_neighbours) if uu[i]!=vv[i]])
+    self.G.add_edges_from([(uu[i] + origin, origin +  vv[i]) for i in range(n_neighbours) if uu[i]!=vv[i]])
 
     #### Randomly add edges between other radii:
     if (radius>1):
@@ -261,13 +261,14 @@ class Neighbourhood(Shape):
         #### Ensure Connectedness
         uu = np.random.choice(list(np.where(np.array(self.labels) == i - 1)[0]), 
                               size= np.sum(np.array(self.labels) == i), replace=True)
-        self.G.add_edges_from([(uu[ii], e ) for ii, e in enumerate(list(np.where(np.array(self.labels) == i)[0]))])
+        self.G.add_edges_from([(uu[ii] +  origin, e + origin ) 
+        for ii, e in enumerate(list(np.where(np.array(self.labels) == i)[0]))])
 
         uu = np.random.choice(list(np.where(np.array(self.labels) == i)[0]) +  list(np.where(np.array(self.labels) == i - 1)[0]), 
                               size= assignment[i] * (n_neighbours-1), replace=True)
         vv = np.random.choice(list(np.where(np.array(self.labels) == i)[0]) +  list(np.where(np.array(self.labels) == i - 1)[0]), 
                               size= assignment[i] * (n_neighbours-1), replace=True)
         try:
-            self.G.add_edges_from([(uu[ii], vv[ii]) for ii in range(n_neighbours) if uu[ii]!=vv[ii]])
+            self.G.add_edges_from([(uu[ii] + origin, origin +  vv[ii]) for ii in range(n_neighbours) if uu[ii]!=vv[ii]])
         except:
             pass

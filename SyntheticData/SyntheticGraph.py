@@ -14,18 +14,20 @@ class SyntheticGraph():
   #### OUTPUT:
   #### -------------
   #### shape: a nx graph with the particular shape:
-  def __init__(self, n_base, dict_shape, m
+  def __init__(self, n_base, list_shape, m
                  ):
     self.G = nx.barabasi_albert_graph(n_base, m, seed=None)
     self.community_colours = [0] * n_base
     self.labels = [0] * n_base
     self.shape_colour = [0] * n_base
+    self.list_shape = list_shape
 
     N = n_base
-    for shape_nb, k in enumerate((dict_shape).keys()):
-        for u in range(dict_shape[k][0]):
-              
-              args = [N, [self.community_colours[-1] + 1]]  + list(dict_shape[k][1:]) 
+    for shape_nb, x in enumerate(list_shape):
+        k = x[0]
+        for u in range(x[1]):
+              print(N)
+              args = [N, [self.community_colours[-1] + 1]]  + list(x[2:]) 
               S = eval(k)(*args)
               S.labels = [shape_nb + 1 + 100 * ll  for ll in S.labels]
               S.shape_colour = [shape_nb + 1] * S.n_nodes
@@ -36,9 +38,7 @@ class SyntheticGraph():
               self.shape_colour += S.shape_colour
               self.labels += S.labels
               self.G.add_edges_from([(np.random.choice(19),  N)])
-              print([N, len(S.labels), len(self.labels)])
               N += S.n_nodes
-              print(self.labels)
     self.n_nodes = N
 
 
