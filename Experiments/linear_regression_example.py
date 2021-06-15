@@ -1,5 +1,6 @@
 import torch
 from torch.autograd import Variable
+
 class linearRegression(torch.nn.Module):
     def __init__(self, inputSize, outputSize):
         super(linearRegression, self).__init__()
